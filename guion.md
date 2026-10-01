@@ -4,9 +4,7 @@ Texto para grabar en audio. Lo que está bajo **Hablado** se lee tal cual. Lo qu
 
 Capítulo: Russell y Norvig, *Making Complex Decisions*, secciones 16.1 a 16.5, archivo [tema.pdf](tema.pdf).
 
-El orden del audio es el de una exposición: presentación del tema, tabla de contenido, y después cada bloque en ese mismo orden. En lo que se dice en voz alta no se nombra el libro ni el número de sección: se define y se explica. Los cuatro insertos de entrevista se mantienen. Su función es recoger una respuesta previa al apartado que viene, no sustituir la explicación.
-
-Leído a unas 135 palabras por minuto, y con unos veinticinco segundos de silencio en cada entrevista, el audio dura unos 35 minutos.
+El orden del audio es el de una exposición: portada en silencio, tabla de contenido, explicación, análisis en computación y comunicaciones, conclusiones y referencias en silencio. En lo que se dice en voz alta no se nombra el libro ni el número de sección: se define y se explica. Los cuatro insertos de entrevista se mantienen. Su función es recoger una respuesta previa al apartado que viene, no sustituir la explicación.
 
 La presentación en [presentacion.html](presentacion.html) todavía no está ajustada a esta versión del texto.
 
@@ -19,6 +17,8 @@ En el audio se pronuncian como están escritos en **Hablado**. Las fórmulas de 
 - ε se dice «épsilon».
 - λ se dice «lambda».
 - La casilla (1,1) se dice «uno uno». La casilla (4,3) se dice «cuatro tres».
+
+
 
 ## Protocolo de las cuatro entrevistas
 
@@ -41,35 +41,39 @@ Preguntas, en el orden del video:
 
 ---
 
-## 1. Presentación · 0:00 a 1:30
 
-### S01 · Yo · Apertura
 
-**En pantalla:** Decisiones complejas. Elegir hoy cuando mañana habrá otra decisión.
+## C0 · Portada
 
-**Hablado:**
+**Duración del bloque:** [calcular duración leyendo]
 
-En este video hablamos de decisiones complejas: cómo elegir una acción ahora, cuando el resultado es aleatorio y, después de esa acción, habrá que decidir otra vez.
+Sin narración. Permanencia en pantalla: unos ocho segundos.
 
-Una decisión de un solo paso tiene la utilidad del resultado a la vista. Aquí la utilidad depende de una secuencia de decisiones. Vamos a definir ese problema, a calcular la decisión y a ver qué cambia cuando falta información.
+### C0S01 · Portada
 
-El ejemplo que recorre todo el video es un entorno de cuatro por tres. Con ese entorno definimos el problema, la política, la utilidad y los algoritmos.
+**Duración:** [calcular duración leyendo]
 
-### S02 · Yo · La pregunta
+**En pantalla:**
 
-**En pantalla:** ¿Qué acción corresponde hoy, si mañana habrá otra decisión y el resultado de hoy es aleatorio?
+- Asignatura: Modelos estocásticos.
+- Título: Decisiones complejas.
+- Expositores: [nombres].
+- Profesor de la asignatura: [nombre].
+- Logo de la Universidad Nacional de Colombia.
 
-**Hablado:**
-
-La pregunta se puede formular así. ¿Qué acción corresponde hoy, si el resultado de esa acción es aleatorio y mañana habrá que decidir de nuevo?
-
-La respuesta no es una lista fija de acciones. Es una política: una acción asignada a cada estado en el que el agente pueda encontrarse. Vamos a construir esa respuesta en el orden de la tabla que sigue.
+**Hablado:** ninguno.
 
 ---
 
-## 2. Tabla de contenido · 1:30 a 2:30
 
-### S03 · Tema · Orden de la exposición
+
+## C0 · Tabla de contenido
+
+
+
+### C0S02 · Tema · Orden de la exposición
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:**
 
@@ -77,30 +81,43 @@ La respuesta no es una lista fija de acciones. Es una política: una acción asi
 2. Los algoritmos: iteración de valores e iteración de políticas.
 3. Los bandidos: explotar o explorar.
 4. La observación parcial: decidir sin conocer la casilla.
+5. Aplicación en computación y comunicaciones.
+6. Conclusiones y recomendaciones.
+7. Bibliografia
 
-**Hablado:**
-
-El video sigue cuatro bloques.
-
-Primero definimos el problema: el entorno, el proceso de decisión de Markov, la política, la utilidad, la ecuación de Bellman y la función Q.
-
-Después hablamos de los algoritmos: la iteración de valores y la iteración de políticas. La programación lineal y los métodos en línea quedan enunciados, sin desarrollo.
-
-Luego hablamos de los bandidos: la elección entre la opción de mayor recompensa observada y la obtención de información. El resultado central es el índice de Gittins.
-
-Al final retiramos la observación completa. El agente no conoce el estado. Conoce una distribución sobre los estados, llamada creencia.
-
-Hay cuatro entrevistas. Cada una formula, antes de la definición, la decisión que vamos a escribir con el modelo.
+**Hablado:** se lee las secciones 
 
 ---
 
-## 3. El problema · 2:30 a 18:00
 
-### S04 · Tema · El entorno de cuatro por tres
 
-**En pantalla:** Rejilla de cuatro columnas y tres filas. Inicio en (1,1). Terminal más uno en (4,3). Terminal menos uno en (4,2). Muro en (2,2). Recompensa por transición no terminal: menos cero punto cero cuatro.
+## C1 · El problema: decisión secuencial, política y utilidad.
+
+**Duración del bloque:** [calcular duración leyendo]
+
+### C1S01 · Yo · El problema
+
+**Duración:** 28 seg
+
+**En pantalla:** Sin frases. Un estado, una flecha que se abre en dos llegadas, y una segunda decisión al llegar. Luego un solo paso con la marca del resultado; después la marca repartida a lo largo de varios pasos. La sucesión fija se rompe cuando el agente se desvía. Al final, cada estado tiene su propia flecha.
 
 **Hablado:**
+
+Se trata de determinar qué acción corresponde en el instante presente cuando el estado siguiente no queda fijado por esa acción y, una vez alcanzado, exige una decisión nueva.
+
+Si la decisión fuera de un solo paso, bastaría con la utilidad del resultado inmediato. En este caso la utilidad depende de la secuencia completa. La solución no consiste, por tanto, en fijar de antemano una sucesión de acciones. Consiste en una política, esto es, en asignar una acción a cada estado en el que el agente pueda encontrarse.
+
+---
+
+
+
+### C1S02 · Tema · Ejemplo del Problema.
+
+**Duración:** 1 min 14 seg
+
+**En pantalla:** La cuadrícula se dibuja por columnas. El muro ocupa dos dos. El agente aparece en uno uno y camina hasta cuatro tres, que se marca con más uno. Vuelve al inicio y camina hasta cuatro dos, que se marca con menos uno. Luego recorre diez pasos hasta el más uno: el total baja de cuatro en cuatro centésimas hasta menos cero punto tres seis y, al sumar el más uno, queda en cero punto seis cuatro. Un paso más lo deja en cero punto seis cero. Desde uno uno salen las cuatro direcciones, y la casilla queda señalada: el agente la conoce.
+
+**Hablado: 1:14**
 
 Definamos el entorno.
 
@@ -110,7 +127,9 @@ En las transiciones que no entran a un estado terminal, la recompensa es menos c
 
 Las acciones en cada estado no terminal son arriba, abajo, izquierda y derecha. En esta primera parte el entorno es totalmente observable: el agente conoce la casilla en la que está.
 
-### S05 · Gente · Ruta corta o ruta larga
+### C1S03 · Gente · Ruta corta o ruta larga
+
+**Duración:** [calcular duración leyendo]
 
 **Producción:** Pregunta uno del protocolo. Se inserta aquí, antes de calcular la probabilidad de la secuencia fija. Duración del inserto: veinte a treinta segundos. Silencio del narrador durante el inserto.
 
@@ -128,7 +147,9 @@ Antes de escribir el modelo, escuchemos esa decisión sin el cálculo. La pregun
 
 Las dos respuestas quedan registradas. A continuación definimos el modelo de transición y vemos por qué una secuencia fija no resuelve el problema. Más adelante, el valor de la recompensa por paso decide cuál de esas dos rutas es óptima.
 
-### S06 · Tema · Modelo de transición
+### C1S04 · Tema · Modelo de transición
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Desde (1,1), la acción arriba llega a (1,2) con probabilidad cero punto ocho, a (2,1) con probabilidad cero punto uno, y permanece en (1,1) con probabilidad cero punto uno.
 
@@ -142,7 +163,9 @@ En el ejemplo, cada acción produce el efecto pedido con probabilidad cero punto
 
 Desde uno uno, la acción arriba llega a uno dos con probabilidad cero punto ocho, a dos uno con probabilidad cero punto uno, y permanece en uno uno con probabilidad cero punto uno, porque el lado izquierdo es el borde.
 
-### S07 · Tema · Por qué una secuencia fija no basta
+### C1S05 · Tema · Por qué una secuencia fija no basta
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Secuencia arriba, arriba, derecha, derecha, derecha. Probabilidad de la trayectoria intencional: cero punto ocho a la quinta, igual a cero punto tres dos siete seis ocho. Probabilidad total de llegar a más uno: cero punto tres dos siete siete seis.
 
@@ -156,7 +179,9 @@ La probabilidad de que las cinco acciones produzcan el efecto pedido es cero pun
 
 Ese valor es aproximadamente un tercio. La secuencia no indica qué hacer si el agente termina en otra casilla. Por eso la solución tiene que asignar una acción a cada estado alcanzable, no solo a los estados de una trayectoria prevista.
 
-### S08 · Tema · Definición de proceso de decisión de Markov
+### C1S06 · Tema · Definición de proceso de decisión de Markov
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Estados, estado inicial, acciones A(s), transición P(s prima | s, a), recompensa R(s, a, s prima).
 
@@ -168,7 +193,9 @@ En este entorno las acciones disponibles son las mismas en todos los estados no 
 
 Para resolverlo usaremos programación dinámica: se divide el problema en subproblemas, se conserva la solución de cada subproblema y se reutiliza. Ese cálculo lo hacemos cuando hablemos de los algoritmos.
 
-### S09 · Tema · Política y política óptima
+### C1S07 · Tema · Política y política óptima
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** π(s) es la acción que la política asigna al estado s. π asterisco es una política óptima.
 
@@ -180,7 +207,9 @@ Como la transición es aleatoria, la misma política puede generar historias dis
 
 Una política, una vez calculada, se ejecuta así: se observa el estado y se aplica la acción correspondiente. El cálculo previo usa las utilidades. La ejecución solo consulta la acción ya asignada.
 
-### S10 · Tema · Políticas óptimas según la recompensa r
+### C1S08 · Tema · Políticas óptimas según la recompensa r
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Para r igual a menos cero punto cero cuatro, en (3,1) son óptimas izquierda y arriba. Debajo, los intervalos de r.
 
@@ -202,7 +231,9 @@ Entre menos cero punto cero dos siete cuatro y cero, en cuatro uno y en tres dos
 
 Si r es positivo, se evitan los dos terminales. Una política que no garantiza llegar a un terminal se llama impropia. Con r positivo y sin descuento, su recompensa total es infinita, y toda política de ese tipo es óptima.
 
-### S11 · Gente · Umbral de la recompensa r
+### C1S09 · Gente · Umbral de la recompensa r
+
+**Duración:** [calcular duración leyendo]
 
 **Producción:** Pregunta dos del protocolo. Se inserta después de mostrar los intervalos de r y antes de separarlos del descuento. Silencio durante el inserto.
 
@@ -220,7 +251,9 @@ Acabamos de ver que la política cambia con r. Antes de hablar del tiempo, escuc
 
 El valor a partir del cual cambia la respuesta es, en el modelo, uno de los umbrales de r que se acaban de enunciar. La recompensa por paso y el peso del futuro son parámetros distintos. El siguiente apartado fija el segundo.
 
-### S12 · Tema · Horizonte y política estacionaria
+### C1S10 · Tema · Horizonte y política estacionaria
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Con horizonte N igual a tres, desde (3,1) la acción óptima es arriba. Con N igual a cien, es izquierda. Sin horizonte fijo, la política óptima es estacionaria.
 
@@ -234,7 +267,9 @@ Si no hay un plazo fijo, no hay motivo para elegir acciones distintas en el mism
 
 Horizonte infinito no significa que toda historia sea infinita. Significa que no hay un plazo establecido de antemano. Si hay estados terminales y la política es propia, la historia termina.
 
-### S13 · Tema · Recompensa descontada
+### C1S11 · Tema · Recompensa descontada
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** U de la historia es igual a R cero, más gamma R uno, más gamma al cuadrado R dos, y así sucesivamente. Gamma igual a cero punto nueve equivale a una tasa de interés de once punto uno por ciento.
 
@@ -246,7 +281,9 @@ Hay tres razones para usar esta forma. En personas y en animales, la recompensa 
 
 Sin descuento, dos historias infinitas pueden valer ambas infinito y no compararse. Si gamma es menor que uno y cada recompensa está acotada por R máxima, la suma no supera a R máxima partida por uno menos gamma.
 
-### S14 · Tema · Utilidad de un estado
+### C1S12 · Tema · Utilidad de un estado
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Gamma igual a uno y r igual a menos cero punto cero cuatro. U(1,1) es igual a cero punto siete cuatro cinco tres. U(3,3) es igual a cero punto nueve cinco siete ocho. U(4,1) es igual a cero punto cuatro dos siete nueve.
 
@@ -260,7 +297,9 @@ Con utilidades descontadas y horizonte infinito, la política óptima no depende
 
 Con U conocida, la acción óptima en s maximiza la recompensa inmediata esperada más el valor descontado del estado siguiente. Esa regla es la que escribimos a continuación como ecuación de Bellman.
 
-### S15 · Tema · Ecuación de Bellman y función Q
+### C1S13 · Tema · Ecuación de Bellman y función Q
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** U(s) es el máximo, sobre las acciones, de la suma sobre s prima de P(s prima | s, a) por corchete R más gamma U(s prima). En (1,1): arriba cero punto siete cuatro cinco, izquierda cero punto siete uno uno, abajo cero punto siete cero cero, derecha cero punto seis siete uno.
 
@@ -274,7 +313,9 @@ La solución del sistema es única. No hacemos aquí la demostración. El uso es
 
 Q de s y a es la utilidad esperada de ejecutar la acción a en s y continuar después con una política óptima. U de s es el máximo de Q, y la política óptima elige la acción de ese máximo.
 
-### S16 · Tema · Escala de recompensas y representación
+### C1S14 · Tema · Escala de recompensas y representación
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Teorema de shaping: R prima igual a R más gamma por fi de s prima menos fi de s. La política óptima no cambia. Tetris: del orden de diez elevado a sesenta y dos estados.
 
@@ -288,9 +329,15 @@ El segundo es la representación. Para un entorno pequeño, la transición y la 
 
 ---
 
-## 4. Los algoritmos · 18:00 a 23:00
 
-### S17 · Tema · Iteración de valores
+
+## C2 · Los algoritmos
+
+**Duración del bloque:** [calcular duración leyendo]
+
+### C2S01 · Tema · Iteración de valores
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Actualización de Bellman. Gamma igual a cero punto nueve y r igual a menos cero punto cero cuatro. En la iteración cinco la política ya es óptima y el error máximo de las utilidades es cero punto cinco uno.
 
@@ -306,7 +353,9 @@ Si gamma es menor que uno, cada iteración reduce el error al menos en el factor
 
 Conviene separar la convergencia de los números y la de las acciones. Con gamma igual a cero punto nueve, en la iteración cinco la política ya es óptima y el error máximo de las utilidades sigue en cero punto cinco uno. La simulación muestra el mismo hecho: las acciones se fijan mientras los valores siguen moviéndose.
 
-### S18 · Tema · Pérdida de política
+### C2S02 · Tema · Pérdida de política
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Si el error de U es menor que épsilon, la pérdida de política es menor que dos épsilon.
 
@@ -316,7 +365,9 @@ La pérdida de política es la diferencia entre la utilidad de la política ópt
 
 En el ejemplo, la pérdida llega a cero antes de que el error de las utilidades sea pequeño. Para decidir cuántas iteraciones ejecutar, el criterio relevante es el momento en que la acción recomendada en cada estado deja de cambiar.
 
-### S19 · Tema · Iteración de políticas y programación lineal
+### C2S03 · Tema · Iteración de políticas y programación lineal
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Evaluación: con la acción fija, el sistema es lineal. Mejora: sustituir la acción por la de mayor Q. Parada: cuando la política no cambia.
 
@@ -328,7 +379,9 @@ El algoritmo termina cuando la política ya no cambia. Esas utilidades cumplen B
 
 Con muchos estados no hace falta resolver el sistema hasta el último decimal, ni actualizar todos los estados en cada vuelta. Esas variantes se llaman iteración modificada e iteración asíncrona. El problema también puede escribirse como un programa lineal. En la práctica, ese método no supera a la programación dinámica en estos procesos.
 
-### S20 · Tema · Métodos en línea
+### C2S04 · Tema · Métodos en línea
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Tetris, del orden de diez elevado a sesenta y dos estados. Con gamma cero punto cinco, un horizonte de profundidad cinco puede bastar. Con gamma cero punto nueve, el cálculo análogo pide profundidad del orden de cuarenta y cuatro.
 
@@ -342,9 +395,15 @@ Con esto cerramos los algoritmos del caso en que el modelo se conoce. Ahora camb
 
 ---
 
-## 5. Los bandidos · 23:00 a 29:00
 
-### S21 · Tema · Definición
+
+## C3 · Los bandidos
+
+**Duración del bloque:** [calcular duración leyendo]
+
+### C3S01 · Tema · Definición
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** n brazos. Cada brazo es un proceso de recompensa de Markov. Solo se puede accionar un brazo en cada instante. Gamma es común.
 
@@ -356,7 +415,9 @@ En cada instante hay dos alternativas. Explotar es seleccionar el brazo de mayor
 
 Dos datos ayudan a situar el problema. Durante la Segunda Guerra Mundial el problema se consideró tan difícil que se propuso, como broma, enviarlo al adversario en calidad de sabotaje intelectual. Y una política óptima no tiene que terminar en el mejor brazo: hay una probabilidad positiva de que se fije en un brazo inferior, porque seguir explorando tiene costo.
 
-### S22 · Gente · Opción conocida u opción nueva
+### C3S02 · Gente · Opción conocida u opción nueva
+
+**Duración:** [calcular duración leyendo]
 
 **Producción:** Pregunta tres del protocolo. Se inserta después de definir explotación y exploración, y antes del ejemplo numérico. Silencio durante el inserto.
 
@@ -374,7 +435,9 @@ La definición ya distingue explotación y exploración. La entrevista recoge la
 
 El ejemplo que sigue muestra que ni repetir siempre la opción conocida ni permanecer siempre en la desconocida es, en general, la política de mayor utilidad. El resultado depende de la secuencia de recompensas y del descuento.
 
-### S23 · Tema · Ejemplo con gamma igual a cero punto cinco
+### C3S03 · Tema · Ejemplo con gamma igual a cero punto cinco
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Brazo M: cero, dos, cero, siete punto dos, y después ceros. Brazo M uno: uno en todos los instantes. Utilidades: uno punto nueve, dos, y dos punto cero dos cinco.
 
@@ -388,7 +451,9 @@ Si se permite cambiar, la política que acciona M durante los cuatro primeros in
 
 El ejemplo muestra lo que importa: la política óptima usa el brazo de recompensa variable mientras esa recompensa llega en instantes cuyo descuento aún es significativo, y después pasa al brazo de recompensa constante.
 
-### S24 · Tema · Índice de Gittins
+### C3S04 · Tema · Índice de Gittins
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Lambda es la recompensa constante que deja indiferente entre seguir con el brazo M y recibir lambda en todos los instantes. La política óptima selecciona el brazo de mayor índice.
 
@@ -400,7 +465,9 @@ Existe un valor de lambda que deja indiferente entre esas dos alternativas. Ese 
 
 Para varios brazos independientes, la política óptima calcula el índice de cada brazo por separado y selecciona el de índice mayor. No se necesita una planificación conjunta. No derivamos aquí la fórmula. Usamos el resultado: el índice resume cada brazo en un número comparable con una recompensa segura.
 
-### S25 · Tema · Superproceso y costo de oportunidad
+### C3S05 · Tema · Superproceso y costo de oportunidad
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Cuatro proyectos y un solo recurso. Calendario óptimo de un proyecto aislado: primera entrega en la semana quince. Calendario que adelanta la entrega a la semana cinco. Con cuatro proyectos, las entregas quedan en las semanas cinco, diez, quince y veinte, en lugar de quince, treinta, cuarenta y cinco y sesenta.
 
@@ -414,9 +481,15 @@ Veamos un caso. El calendario óptimo de un solo proyecto entrega la primera uni
 
 ---
 
-## 6. Observación parcial · 29:00 a 34:00
 
-### S26 · Tema · Qué cambia al retirar la observación completa
+
+## C4 · Observación parcial
+
+**Duración del bloque:** [calcular duración leyendo]
+
+### C4S01 · Tema · Qué cambia al retirar la observación completa
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** POMDP igual a MDP más un modelo de sensor P(e | s).
 
@@ -426,7 +499,9 @@ Hasta aquí el agente conocía el estado, y la política óptima dependía de es
 
 Si la observación es parcial, el agente no puede ejecutar pi de s, porque no sabe si el estado actual es s. Además, la utilidad y la acción óptima dependen de la información disponible, no solo del estado físico. Definamos este problema como un proceso de decisión de Markov parcialmente observable. El entorno real es de este tipo, así que no es un caso que se pueda dejar fuera por ser más difícil.
 
-### S27 · Gente · Desplazamiento u observación
+### C4S02 · Gente · Desplazamiento u observación
+
+**Duración:** [calcular duración leyendo]
 
 **Producción:** Pregunta cuatro del protocolo. Se inserta después de enunciar que el estado ya no se observa, y antes de definir la creencia. Silencio durante el inserto.
 
@@ -444,7 +519,9 @@ Antes de definir el estado de creencia, se registra cómo se responde sin esa de
 
 Definamos las dos posibilidades. Un desplazamiento cambia la distribución sobre las casillas. Una observación, aunque no entregue la recompensa del terminal, puede reducir esa distribución y modificar la decisión siguiente.
 
-### S28 · Tema · Sensor, creencia y actualización
+### C4S03 · Tema · Sensor, creencia y actualización
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** Creencia inicial uniforme, un noveno en cada uno de los nueve estados no terminales. Actualización: la acción aplica el modelo de transición; la evidencia repondera los estados compatibles con el sensor.
 
@@ -462,7 +539,9 @@ La actualización tiene dos pasos. La acción reparte la probabilidad de cada es
 
 En la simulación la distribución inicial es uniforme. Cada observación la concentra. Cada desplazamiento la dispersa según la transición. La casilla real puede ser, o no, la de mayor probabilidad. La creencia es la distribución condicionada a las acciones y a las evidencias, no la casilla.
 
-### S29 · Tema · Consecuencia para la acción y para el cálculo
+### C4S04 · Tema · Consecuencia para la acción y para el cálculo
+
+**Duración:** [calcular duración leyendo]
 
 **En pantalla:** La acción óptima depende de la creencia. El conjunto de creencias es continuo.
 
@@ -476,11 +555,41 @@ La consecuencia que se retiene es la siguiente. El cálculo exacto es de otro or
 
 ---
 
-## 7. Cierre · 34:00 a 35:00
 
-### S30 · Yo · Recapitulación
 
-**En pantalla:** Los cuatro bloques de la tabla inicial, y la política del entorno con r igual a menos cero punto cero cuatro.
+## C5 · Análisis y aplicación en computación y comunicaciones
+
+**Duración del bloque:** [calcular duración leyendo]
+
+### C5S01 · Tema · Dónde aparece el cálculo
+
+**Duración:** [calcular duración leyendo]
+
+**En pantalla:** Política como regla de la siguiente acción. Tabla completa si el modelo cabe. Cálculo en el momento si el estado no cabe. Bandidos: anuncios, configuraciones, caché. Comunicaciones: ruta, potencia, banda. Medir también es una acción.
+
+**Hablado:**
+
+Hablemos de dónde aparece este cálculo en computación y en comunicaciones.
+
+En computación, una política es la regla con la que un programa elige la siguiente acción cuando el resultado no está garantizado. La iteración de valores y la de políticas calculan esa regla si el modelo cabe en una tabla. Cuando el estado es demasiado grande, como en el tablero de diez por veinte, la decisión se calcula en el momento, mirando hacia adelante.
+
+Los bandidos aparecen cuando hay que repartir ensayos entre opciones: qué anuncio mostrar, qué configuración probar, qué elemento conservar en una caché. Explotar repite lo que ya rindió. Explorar gasta un ensayo para saber más.
+
+En comunicaciones, el canal no se comporta igual en cada instante. Elegir una ruta, una potencia o una banda es una acción. La recompensa puede ser el paquete que llega o el retardo que se evita. Si el nodo no observa el estado completo del enlace, solo una medida con error, el problema es el de la creencia. La acción puede enviar el paquete o puede medir de nuevo para reducir la incertidumbre. Gamma pesa el retardo: un paquete que llega tarde vale menos. La recompensa por paso castiga el intento que no termina.
+
+---
+
+
+
+## C6 · Conclusiones y recomendaciones
+
+**Duración del bloque:** [calcular duración leyendo]
+
+### C6S01 · Yo · Recapitulación
+
+**Duración:** [calcular duración leyendo]
+
+**En pantalla:** Los bloques de la tabla inicial, la política del entorno con r igual a menos cero punto cero cuatro, y tres recomendaciones.
 
 **Hablado:**
 
@@ -495,3 +604,29 @@ Luego, el índice de Gittins compara seguir en un brazo con recibir una recompen
 Por último, si el estado no se observa, la política se define sobre la creencia.
 
 La acción de hoy es la que esa política asigna al estado actual o, si el estado no se observa, a la creencia actual. El cálculo ya incluye la transición aleatoria y las decisiones posteriores.
+
+La recomendación es esta. Conviene calcular la tabla completa cuando el entorno es pequeño y el modelo se conoce. Conviene calcular en el momento de la decisión cuando el número de estados no cabe. Y conviene tratar la medición como una acción, no como un dato gratis, cuando el canal o el sistema solo se observan en parte.
+
+---
+
+
+
+## C7 · Referencias bibliográficas
+
+**Duración del bloque:** [calcular duración leyendo]
+
+Sin narración. Permanencia en pantalla: unos doce segundos.
+
+### C7S01 · Referencias
+
+**Duración:** [calcular duración leyendo]
+
+**En pantalla:**
+
+- Russell, Stuart y Norvig, Peter. Artificial Intelligence: A Modern Approach. 4.ª ed. Pearson, 2020. Capítulo 16, Making Complex Decisions.
+- Bellman, Richard. Dynamic Programming. Princeton University Press, 1957.
+- Gittins, John C. «Bandit Processes and Dynamic Allocation Indices». Journal of the Royal Statistical Society, Series B, vol. 41, n.º 2, 1979, pp. 148-177.
+- Ng, Andrew Y.; Harada, Daishi y Russell, Stuart. «Policy Invariance under Reward Transformations: Theory and Application to Reward Shaping». Proceedings of the 16th International Conference on Machine Learning, 1999.
+- Whittle, Peter. Discusión de «Bandit Processes and Dynamic Allocation Indices». Journal of the Royal Statistical Society, Series B, vol. 41, n.º 2, 1979.
+
+**Hablado:** ninguno.
