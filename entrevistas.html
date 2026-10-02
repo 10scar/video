@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrevistas · Decisiones complejas</title>
+  <style>
+    :root {
+      --papel: #f4f0e6;
+      --tinta: #1c1915;
+      --suave: #8a8175;
+      --agente: #c9842a;
+      --muro: #2a2824;
+      --mas: #1f7a4d;
+      --menos: #9c2f2f;
+      --azul: #1a56c4;
+      --linea: #d9d1c3;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      background: var(--papel);
+      color: var(--tinta);
+      font-family: "Liberation Sans", "Source Sans 3", system-ui, sans-serif;
+    }
+    .pagina { display: none; min-height: 100%; }
+    .pagina.activa {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+    }
+    header, footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+    }
+    header { border-bottom: 1px solid var(--linea); }
+    footer { border-top: 1px solid var(--linea); }
+    .marca { font-size: 0.85rem; letter-spacing: 0.04em; color: var(--suave); }
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: 1.25rem 1.5rem 1.5rem;
+    }
+    main.con-rejilla {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      align-items: center;
+      justify-items: center;
+      padding-left: 1.25rem;
+    }
+    .lateral {
+      justify-self: start;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.55rem;
+      width: 100%;
+    }
+    .lateral .opciones,
+    .lateral .fila {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.55rem;
+      margin: 0;
+    }
+    .lateral button,
+    .lateral .rango {
+      width: 100%;
+      border-radius: 12px;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+    }
+    .lateral input[type="range"] { width: 7rem; }
+    .teclas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.4rem;
+    }
+    .teclas [data-mov="up"] { grid-column: 2; grid-row: 1; }
+    .teclas [data-mov="left"] { grid-column: 1; grid-row: 2; }
+    .teclas [data-mov="down"] { grid-column: 2; grid-row: 2; }
+    .teclas [data-mov="right"] { grid-column: 3; grid-row: 2; }
+    .teclas button { padding: 0.55rem 0.3rem; font-size: 0.82rem; }
+    .escenario {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+      width: 100%;
+    }
+    .controles {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 40rem;
+    }
+    .opciones, .fila { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-bottom: 0.9rem; }
+    button, .rango {
+      font: inherit;
+      color: var(--tinta);
+      background: transparent;
+      border: 1.5px solid var(--tinta);
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+    }
+    button[aria-pressed="true"], button.primario {
+      background: var(--tinta);
+      color: var(--papel);
+    }
+    button:disabled { opacity: 0.45; cursor: default; }
+    label.rango {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      border-radius: 12px;
+      cursor: default;
+    }
+    input[type="range"] { width: 9rem; accent-color: var(--azul); }
+    .suma {
+      font-size: 1.8rem;
+      font-weight: 700;
+      min-height: 2.2rem;
+      margin: 0.2rem 0 0.4rem;
+    }
+    .mensaje { min-height: 3.2rem; line-height: 1.4; margin: 0; text-align: center; }
+    .historial, .senales { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; min-height: 1.6rem; }
+    .chip {
+      border: 1px solid var(--linea);
+      border-radius: 999px;
+      padding: 0.1rem 0.55rem;
+      font-size: 0.85rem;
+    }
+    .chip.mas { color: var(--mas); border-color: var(--mas); }
+    .chip.menos { color: var(--menos); border-color: var(--menos); }
+    .rejilla {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      width: min(100%, 440px);
+      margin-inline: auto;
+    }
+    .energia {
+      width: min(100%, 440px);
+      height: 16px;
+      border: 2px solid var(--tinta);
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e7e0d4;
+    }
+    .energia-nivel {
+      height: 100%;
+      width: 100%;
+      background: var(--mas);
+    }
+    .casilla {
+      aspect-ratio: 1;
+      border: 2px solid var(--tinta);
+      border-radius: 6px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      background: transparent;
+    }
+    .casilla.muro { background: var(--muro); border-color: var(--muro); }
+    .casilla.mas { background: var(--mas); color: var(--papel); border-color: var(--mas); }
+    .casilla.menos { background: var(--menos); color: var(--papel); border-color: var(--menos); }
+    .casilla.ruta { box-shadow: inset 0 0 0 3px var(--agente); }
+    .casilla .agente {
+      width: 74%;
+      height: 74%;
+      object-fit: contain;
+      position: absolute;
+      z-index: 2;
+    }
+    .casilla .meta {
+      width: 70%;
+      height: 70%;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+    }
+    #p4 .energia { position: relative; }
+    .energia-gasto {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: var(--menos);
+      opacity: 0;
+      transition: opacity 1.4s ease-out;
+    }
+    .casilla .prob {
+      position: absolute;
+      bottom: 3px;
+      right: 5px;
+      z-index: 3;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--azul);
+    }
+    .valores {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      visibility: hidden;
+    }
+    .valores.visible { visibility: visible; }
+    .valores span {
+      border: 2px solid var(--tinta);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-weight: 600;
+    }
+    .valores span.elegida { background: var(--tinta); color: var(--papel); }
+    .casilla.escaneo { animation: escaneo 0.35s ease-in-out 2 alternate; }
+    @keyframes escaneo {
+      from { box-shadow: inset 0 0 0 0 var(--azul); }
+      to { box-shadow: inset 0 0 0 6px var(--azul); }
+    }
+    .casilla.puerta-cerrada { box-shadow: inset 0 0 0 5px var(--agente); }
+    .casilla.puerta-abierta { box-shadow: inset 0 0 0 5px var(--mas); }
+    .casilla .duda {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--agente);
+      line-height: 1;
+    }
+    #rejilla-3 {
+      width: max-content;
+      grid-template-columns: repeat(3, 82px);
+    }
+    #rejilla-3 .casilla { width: 82px; height: 82px; }
+    .carta {
+      text-align: left;
+      border-radius: 16px;
+      padding: 1rem;
+      min-height: 9rem;
+    }
+    .carta strong { display: block; margin-bottom: 0.45rem; }
+    .carta span { display: block; color: var(--suave); font-weight: 400; line-height: 1.4; }
+    .puntos { display: flex; gap: 0.4rem; }
+    .puntos button { width: 0.7rem; height: 0.7rem; padding: 0; border-radius: 50%; }
+    .puntos button[aria-current="true"] { background: var(--tinta); }
+    dialog {
+      border: none;
+      border-radius: 16px;
+      background: var(--papel);
+      color: var(--tinta);
+      max-width: min(36rem, calc(100vw - 2rem));
+      padding: 1.4rem 1.5rem 1.2rem;
+      box-shadow: 0 16px 48px rgba(28, 25, 21, 0.2);
+    }
+    dialog::backdrop { background: rgba(28, 25, 21, 0.45); }
+    dialog p { font-size: 1.15rem; line-height: 1.45; margin: 0 0 0.8rem; }
+    dialog .leyenda { color: var(--suave); font-size: 0.95rem; }
+    @media (max-width: 800px) {
+      main.con-rejilla { grid-template-columns: 1fr; justify-items: stretch; }
+      .lateral { max-width: 280px; }
+      .rejilla { width: min(100%, 320px); }
+      .cartas { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <section class="pagina activa" id="p1" data-pagina="0">
+    <header>
+      <div class="marca">C1S03 · Ruta corta o ruta larga</div>
+      <button type="button" class="ver-pregunta">Pregunta</button>
+    </header>
+    <main class="con-rejilla">
+      <aside class="lateral">
+        <div class="opciones" id="rutas-1">
+          <button type="button" data-ruta="larga">Ruta larga</button>
+          <button type="button" data-ruta="corta">Ruta corta</button>
+        </div>
+        <button type="button" class="primario" id="probar-1" disabled>Recorrer</button>
+        <button type="button" id="limpiar-1" disabled>Limpiar pruebas</button>
+      </aside>
+      <div class="escenario">
+        <div class="rejilla" id="rejilla-1" aria-label="Entorno de cinco por tres"></div>
+        <div class="energia" aria-label="Energía"><div class="energia-nivel" id="barra-1"></div></div>
+        <p class="suma" id="total-1"></p>
+        <p class="mensaje" id="mensaje-1">Seleccione la ruta para ver un recorrido.</p>
+        <div class="historial" id="historial-1"></div>
+      </div>
+    </main>
+    <dialog>
+      <p>Si cada paso acierta en la dirección pedida solo ocho de cada diez veces, y el resto del tiempo el agente se desplaza de lado, ¿conviene la ruta corta, junto al estado de recompensa menos uno, o la ruta larga, que se aleja de ese estado?</p>
+      <p class="leyenda">Elija una ruta. El agente intenta seguirla. En cada paso hay probabilidad 0,8 de obedecer y 0,1 de irse a cada lado. Un muro o el borde lo dejan en la misma casilla.</p>
+      <button type="button" class="cerrar">Cerrar</button>
+    </dialog>
+    <footer>
+      <button type="button" id="prev" disabled>Anterior</button>
+      <div class="puntos" id="puntos"></div>
+      <button type="button" id="next">Siguiente</button>
+    </footer>
+  </section>
+
+  <section class="pagina" id="p2" data-pagina="1">
+    <header>
+      <div class="marca">C1S09 · Umbral de la recompensa r</div>
+      <button type="button" class="ver-pregunta">Pregunta</button>
+    </header>
+    <main class="con-rejilla">
+      <aside class="lateral">
+        <div class="opciones" id="robots-2">
+          <button type="button" data-robot="viejo">Robot viejo</button>
+          <button type="button" data-robot="nuevo">Robot nuevo</button>
+        </div>
+      </aside>
+      <div class="escenario">
+        <div class="rejilla" id="rejilla-2" aria-label="Entorno de cinco por tres"></div>
+        <div class="energia" aria-label="Energía"><div class="energia-nivel" id="barra-2"></div></div>
+        <p class="suma" id="suma-2"></p>
+        <p class="mensaje" id="mensaje-2"></p>
+      </div>
+    </main>
+    <dialog>
+      <p>Cada transición entre estados no terminales recibe una recompensa r. ¿A partir de qué valor de r elegirían ustedes entrar de inmediato al estado de recompensa menos uno, en lugar de continuar hacia el estado de recompensa más uno?</p>
+      <p class="leyenda">El robot viejo gasta mucha energía y toma la ruta corta, junto a las escaleras. Si se queda sin batería, no se mueve más. El robot nuevo gasta poca energía y toma la ruta larga, lejos de las escaleras.</p>
+      <button type="button" class="cerrar">Cerrar</button>
+    </dialog>
+    <footer>
+      <button type="button" class="anterior">Anterior</button>
+      <div class="marca">Pregunta 2 de 4</div>
+      <button type="button" class="siguiente">Siguiente</button>
+    </footer>
+  </section>
+
+  <section class="pagina" id="p3" data-pagina="2">
+    <header>
+      <div class="marca">C3S02 · Habitación conocida u otra habitación</div>
+      <button type="button" class="ver-pregunta">Pregunta</button>
+    </header>
+    <main class="con-rejilla">
+      <aside class="lateral">
+        <div class="opciones" id="casos-3">
+          <button type="button" data-caso="una">Primer caso</button>
+          <button type="button" data-caso="mes">Segundo caso</button>
+        </div>
+      </aside>
+      <div class="escenario">
+        <div class="rejilla" id="rejilla-3" aria-label="Habitaciones"></div>
+        <div class="energia" aria-label="Energía"><div class="energia-nivel" id="barra-3"></div></div>
+        <p class="suma" id="total-3"></p>
+      </div>
+    </main>
+    <footer>
+      <button type="button" class="anterior">Anterior</button>
+      <div class="marca">Pregunta 3 de 4</div>
+      <button type="button" class="siguiente">Siguiente</button>
+    </footer>
+    <dialog>
+      <p>La definición ya distingue explotación y exploración. El robot conoce una habitación donde normalmente recoge una cantidad moderada de suciedad. Hay otra habitación que nunca ha limpiado: podría estar casi limpia o contener mucha más suciedad. Primer caso: al robot solo le queda batería para limpiar una habitación. ¿Cuál debería elegir? Segundo caso: podrá repetir esta decisión todos los días durante un mes. ¿Elegirían la misma habitación? ¿Por qué?</p>
+      <p class="leyenda">En el primer caso el robot limpia la habitación conocida, llega a la puerta y no entra. En el segundo cruza la puerta y queda a la vista la habitación más amplia.</p>
+      <button type="button" class="cerrar">Cerrar</button>
+    </dialog>
+  </section>
+
+  <section class="pagina" id="p4" data-pagina="3">
+    <header>
+      <div class="marca">C4S02 · Avanzar o escanear</div>
+      <button type="button" class="ver-pregunta">Pregunta</button>
+    </header>
+    <main class="con-rejilla">
+      <aside class="lateral">
+        <div class="opciones" id="casos-4">
+          <button type="button" data-caso="seguro">Primer caso</button>
+          <button type="button" data-caso="duda">Segundo caso</button>
+        </div>
+      </aside>
+      <div class="escenario">
+        <div class="rejilla" id="rejilla-4" aria-label="Dónde puede estar el robot"></div>
+        <div class="energia" aria-label="Energía"><div class="energia-nivel" id="barra-4"></div><div class="energia-gasto" id="gastado-4"></div></div>
+        <div class="valores" id="valores-4">
+          <span data-accion="avanzar">Avanzar <b></b></span>
+          <span data-accion="escanear">Escanear <b></b></span>
+        </div>
+        <p class="suma" id="total-4"></p>
+      </div>
+    </main>
+    <footer>
+      <button type="button" class="anterior">Anterior</button>
+      <div class="marca">Pregunta 4 de 4</div>
+      <button type="button" class="siguiente" disabled>Siguiente</button>
+    </footer>
+    <dialog>
+      <p>El robot no sabe con certeza dónde se encuentra. Puede escanear el entorno para ubicarse mejor, pero el escaneo consume batería equivalente a varios movimientos. Primer caso: está casi seguro de encontrarse en el pasillo correcto y considera muy poco probable estar cerca de las escaleras. ¿Debería avanzar o escanear? Segundo caso: considera casi igual de probable estar en el pasillo correcto o cerca de las escaleras. ¿Tomaría la misma decisión? ¿Por qué?</p>
+      <p class="leyenda">El mapa es conocido; lo que el robot no sabe es en qué casilla está. Aparece en las dos casillas posibles, más nítido cuanto más probable: el pasillo correcto, desde donde avanzar lleva a la carga, y la casilla junto a las escaleras, desde donde avanzar lleva a caer. En los dos casos está en la misma casilla real; solo cambia su creencia. Debajo se compara el valor esperado de avanzar y de escanear, que gasta la batería de seis pasos, y el robot elige el mayor.</p>
+      <button type="button" class="cerrar">Cerrar</button>
+    </dialog>
+  </section>
+
+  <script>
+    const ANCHO = 5;
+    const INICIO = { x: 2, y: 1 };
+    const MUROS = new Set(["2,2", "3,2"]);
+    const TERMINAL = { "5,3": 1, "5,2": -1 };
+    const DIR = { up: [0, 1], down: [0, -1], left: [-1, 0], right: [1, 0] };
+    const LADO = { up: ["left", "right"], down: ["left", "right"], left: ["up", "down"], right: ["up", "down"] };
+    const NOMBRE = { up: "arriba", down: "abajo", left: "izquierda", right: "derecha" };
+    const RUTA = {
+      larga: [[2, 1], [1, 1], [1, 2], [1, 3], [2, 3], [3, 3], [4, 3], [5, 3]],
+      corta: [[2, 1], [3, 1], [4, 1], [4, 2], [4, 3], [5, 3]],
+      menos: [[2, 1], [3, 1], [4, 1], [5, 1], [5, 2]]
+    };
+
+    function clave(x, y) { return x + "," + y; }
+    function libre(x, y) {
+      return x >= 1 && x <= ANCHO && y >= 1 && y <= 3 && !MUROS.has(clave(x, y));
+    }
+    function destino(x, y, accion) {
+      const [dx, dy] = DIR[accion];
+      const nx = x + dx;
+      const ny = y + dy;
+      if (!libre(nx, ny)) return { x, y, seQuedo: true };
+      return { x: nx, y: ny, seQuedo: false };
+    }
+    function transicion(x, y, accion) {
+      const azar = Math.random();
+      let pedida = accion;
+      if (azar >= 0.8 && azar < 0.9) pedida = LADO[accion][0];
+      else if (azar >= 0.9) pedida = LADO[accion][1];
+      const llega = destino(x, y, pedida);
+      return { ...llega, real: pedida, obedecio: pedida === accion };
+    }
+    function politica(tipo, x, y) {
+      const camino = RUTA[tipo];
+      const indice = camino.findIndex(([cx, cy]) => cx === x && cy === y);
+      let objetivo;
+      if (indice >= 0 && indice < camino.length - 1) objetivo = camino[indice + 1];
+      else {
+        objetivo = camino[0];
+        let mejor = 99;
+        for (const punto of camino) {
+          const distancia = Math.abs(punto[0] - x) + Math.abs(punto[1] - y);
+          if (distancia < mejor) {
+            mejor = distancia;
+            objetivo = punto;
+          }
+        }
+      }
+      if (objetivo[0] > x) return "right";
+      if (objetivo[0] < x) return "left";
+      if (objetivo[1] > y) return "up";
+      return "down";
+    }
+    function coma(n) {
+      const signo = n < 0 ? "−" : "";
+      return signo + Math.abs(n).toFixed(2).replace(".", ",");
+    }
+    function casillas() {
+      const celdas = [];
+      for (let y = 3; y >= 1; y--) {
+        for (let x = 1; x <= ANCHO; x++) celdas.push([x, y]);
+      }
+      return celdas;
+    }
+    function pintar(rejilla, estado) {
+      rejilla.innerHTML = "";
+      const ruta = new Set((estado.ruta || []).map(([x, y]) => clave(x, y)));
+      for (const [x, y] of casillas()) {
+        const k = clave(x, y);
+        const celda = document.createElement("div");
+        celda.className = "casilla";
+        if (MUROS.has(k)) celda.classList.add("muro");
+        else if (k === "5,3") {
+          const carga = document.createElement("img");
+          carga.src = "img/carga.png";
+          carga.alt = "Carga";
+          carga.className = "meta";
+          celda.appendChild(carga);
+        } else if (k === "5,2") {
+          const escaleras = document.createElement("img");
+          escaleras.src = "img/escaleras.png";
+          escaleras.alt = "Escaleras";
+          escaleras.className = "meta";
+          celda.appendChild(escaleras);
+        }
+        if (ruta.has(k) && !MUROS.has(k)) celda.classList.add("ruta");
+        if (estado.agente && estado.agente.x === x && estado.agente.y === y) {
+          const agente = document.createElement("img");
+          agente.src = "img/robot.png";
+          agente.alt = "";
+          agente.className = "agente";
+          celda.appendChild(agente);
+        }
+        rejilla.appendChild(celda);
+      }
+    }
+
+    const paginas = [...document.querySelectorAll(".pagina")];
+    let actual = 0;
+    const puntos = document.getElementById("puntos");
+    paginas.forEach((_, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", "Pregunta " + (i + 1));
+      b.addEventListener("click", () => ir(i));
+      puntos.appendChild(b);
+    });
+    function ir(i) {
+      actual = Math.max(0, Math.min(paginas.length - 1, i));
+      paginas.forEach((p, k) => p.classList.toggle("activa", k === actual));
+      puntos.querySelectorAll("button").forEach((b, k) => b.setAttribute("aria-current", k === actual ? "true" : "false"));
+      document.getElementById("prev").disabled = actual === 0;
+      document.getElementById("next").disabled = actual === paginas.length - 1;
+    }
+    document.getElementById("prev").addEventListener("click", () => ir(actual - 1));
+    document.getElementById("next").addEventListener("click", () => ir(actual + 1));
+    document.querySelectorAll(".anterior").forEach((b) => b.addEventListener("click", () => ir(actual - 1)));
+    document.querySelectorAll(".siguiente").forEach((b) => b.addEventListener("click", () => ir(actual + 1)));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") ir(actual + 1);
+      if (e.key === "ArrowLeft") ir(actual - 1);
+    });
+    ir(0);
+
+    document.querySelectorAll(".ver-pregunta").forEach((boton) => {
+      boton.addEventListener("click", () => boton.closest(".pagina").querySelector("dialog").showModal());
+    });
+    document.querySelectorAll("dialog .cerrar").forEach((boton) => {
+      boton.addEventListener("click", () => boton.closest("dialog").close());
+    });
+    document.querySelectorAll("dialog").forEach((cuadro) => {
+      cuadro.addEventListener("click", (evento) => {
+        if (evento.target === cuadro) cuadro.close();
+      });
+    });
+
+    const rejilla1 = document.getElementById("rejilla-1");
+    const rejilla2 = document.getElementById("rejilla-2");
+    pintar(rejilla1, { agente: INICIO });
+    pintar(rejilla2, { agente: INICIO });
+
+    let ruta1 = null;
+    let token1 = 0;
+    const historial1 = [];
+    document.getElementById("rutas-1").addEventListener("click", (e) => {
+      const boton = e.target.closest("button");
+      if (!boton) return;
+      ruta1 = boton.dataset.ruta;
+      document.querySelectorAll("#rutas-1 button").forEach((b) => b.setAttribute("aria-pressed", b === boton ? "true" : "false"));
+      document.getElementById("probar-1").disabled = false;
+      pintar(rejilla1, { ruta: RUTA[ruta1], agente: INICIO });
+      document.getElementById("mensaje-1").textContent = ruta1 === "larga"
+        ? "Ruta larga: sube por la primera columna y cruza por arriba, lejos de −1."
+        : "Ruta corta: avanza por abajo y sube junto a −1.";
+    });
+    document.getElementById("probar-1").addEventListener("click", () => correrRuta(1));
+    document.getElementById("limpiar-1").addEventListener("click", () => {
+      historial1.length = 0;
+      document.getElementById("historial-1").innerHTML = "";
+      document.getElementById("total-1").textContent = "";
+      document.getElementById("barra-1").style.width = "100%";
+      document.getElementById("limpiar-1").disabled = true;
+    });
+
+    async function correrRuta(pagina) {
+      const esDos = pagina === 2;
+      const tipo = esDos ? ruta2 : ruta1;
+      if (!tipo) return;
+      const token = esDos ? ++token2 : ++token1;
+      const gasto = esDos ? gasto2 : 0.04;
+      const rejilla = esDos ? rejilla2 : rejilla1;
+      const mensaje = document.getElementById(esDos ? "mensaje-2" : "mensaje-1");
+      const probar = esDos ? null : document.getElementById("probar-1");
+      const total = document.getElementById(esDos ? "suma-2" : "total-1");
+      const barra = document.getElementById(esDos ? "barra-2" : "barra-1");
+      if (probar) probar.disabled = true;
+      let x = INICIO.x;
+      let y = INICIO.y;
+      let suma = 0;
+      let energia = 1;
+      const mostrar = () => {
+        const queda = Math.max(0, Math.min(1, energia));
+        barra.style.width = (queda * 100) + "%";
+        barra.style.background = queda > 0.45 ? "#1f7a4d" : queda > 0.2 ? "#c9842a" : "#9c2f2f";
+        total.textContent = "Total: " + coma(suma);
+      };
+      pintar(rejilla, { ruta: RUTA[tipo], agente: { x, y } });
+      mostrar();
+      mensaje.textContent = "";
+      for (let paso = 0; paso < 28; paso++) {
+        await esperar(480);
+        if ((esDos ? token2 : token1) !== token) return;
+        if (esDos && viejo2 && energia < gasto) {
+          mostrar();
+          return;
+        }
+        const accion = politica(tipo, x, y);
+        const llega = transicion(x, y, accion);
+        const k = clave(llega.x, llega.y);
+        if (k in TERMINAL) {
+          suma += TERMINAL[k];
+          pintar(rejilla, { ruta: RUTA[tipo], agente: llega });
+          mostrar();
+          if (!esDos) anotar(TERMINAL[k] > 0 ? "Llegó a +1." : "Llegó a −1.");
+          if (probar) probar.disabled = false;
+          return;
+        }
+        suma -= gasto;
+        energia -= gasto;
+        x = llega.x;
+        y = llega.y;
+        pintar(rejilla, { ruta: RUTA[tipo], agente: { x, y } });
+        mostrar();
+      }
+      mostrar();
+      if (probar) probar.disabled = false;
+    }
+    function anotar(fin) {
+      historial1.push(fin);
+      const caja = document.getElementById("historial-1");
+      const chip = document.createElement("span");
+      chip.className = "chip " + (fin.includes("+1") ? "mas" : "menos");
+      chip.textContent = fin.includes("+1") ? "+1" : "−1";
+      caja.appendChild(chip);
+      document.getElementById("limpiar-1").disabled = false;
+    }
+    function esperar(ms) { return new Promise((resolver) => setTimeout(resolver, ms)); }
+
+    let ruta2 = null;
+    let gasto2 = 0.04;
+    let viejo2 = false;
+    let token2 = 0;
+    document.getElementById("robots-2").addEventListener("click", (e) => {
+      const boton = e.target.closest("button");
+      if (!boton) return;
+      const viejo = boton.dataset.robot === "viejo";
+      viejo2 = viejo;
+      ruta2 = viejo ? "corta" : "larga";
+      gasto2 = viejo ? 0.25 : 0.04;
+      document.querySelectorAll("#robots-2 button").forEach((b) => b.setAttribute("aria-pressed", b === boton ? "true" : "false"));
+      correrRuta(2);
+    });
+
+    let token3 = 0;
+    const rejilla3 = document.getElementById("rejilla-3");
+    function pintarHabitacion(abierta, agente) {
+      const ancho = abierta ? 6 : 3;
+      rejilla3.style.gridTemplateColumns = "repeat(" + ancho + ", 82px)";
+      rejilla3.innerHTML = "";
+      for (let y = 3; y >= 1; y--) {
+        for (let x = 1; x <= ancho; x++) {
+          const celda = document.createElement("div");
+          celda.className = "casilla";
+          if (x === 3 && y !== 2) celda.classList.add("muro");
+          if (x === 3 && y === 2) {
+            celda.classList.add(abierta ? "puerta-abierta" : "puerta-cerrada");
+            if (!(agente && agente.x === 3 && agente.y === 2)) {
+              const duda = document.createElement("span");
+              duda.className = "duda";
+              duda.textContent = "?";
+              celda.appendChild(duda);
+            }
+          }
+          if (agente && agente.x === x && agente.y === y) {
+            const img = document.createElement("img");
+            img.src = "img/robot.png";
+            img.alt = "";
+            img.className = "agente";
+            celda.appendChild(img);
+          }
+          rejilla3.appendChild(celda);
+        }
+      }
+    }
+    function mostrarEnergia3(energia, suma) {
+      const queda = Math.max(0, Math.min(1, energia));
+      const barra = document.getElementById("barra-3");
+      barra.style.width = (queda * 100) + "%";
+      barra.style.background = queda > 0.45 ? "#1f7a4d" : queda > 0.2 ? "#c9842a" : "#9c2f2f";
+      document.getElementById("total-3").textContent = "Total: " + coma(suma);
+    }
+    async function recorrerHabitacion(pasos, gasto, abrirEn) {
+      const mi = ++token3;
+      let energia = 1;
+      let suma = 0;
+      pintarHabitacion(false, pasos[0]);
+      mostrarEnergia3(energia, suma);
+      for (let i = 1; i < pasos.length; i++) {
+        await esperar(460);
+        if (mi !== token3) return;
+        if (energia < gasto) {
+          mostrarEnergia3(energia, suma);
+          return;
+        }
+        energia -= gasto;
+        suma -= gasto;
+        const abierta = abrirEn !== null && i >= abrirEn;
+        pintarHabitacion(abierta, pasos[i]);
+        mostrarEnergia3(energia, suma);
+      }
+    }
+    function casoUna() {
+      recorrerHabitacion(
+        [{ x: 2, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 2, y: 3 }, { x: 1, y: 3 }, { x: 1, y: 2 }, { x: 1, y: 1 }],
+        0.14,
+        null
+      );
+    }
+    function casoMes() {
+      recorrerHabitacion(
+        [{ x: 2, y: 1 }, { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 5, y: 2 }, { x: 6, y: 2 }],
+        0.04,
+        2
+      );
+    }
+    document.getElementById("casos-3").addEventListener("click", (e) => {
+      const boton = e.target.closest("button");
+      if (!boton) return;
+      document.querySelectorAll("#casos-3 button").forEach((b) => b.setAttribute("aria-pressed", b === boton ? "true" : "false"));
+      if (boton.dataset.caso === "una") casoUna();
+      else casoMes();
+    });
+    pintarHabitacion(false, { x: 2, y: 1 });
+    mostrarEnergia3(1, 0);
+
+    const rejilla4 = document.getElementById("rejilla-4");
+    const PASILLO = { x: 4, y: 3 };
+    const JUNTO_ESCALERAS = { x: 4, y: 2 };
+    const REAL_4 = PASILLO;
+    const PASO_4 = 0.04;
+    const ESCANEO_4 = 0.24;
+    let token4 = 0;
+    function pintar4(estado) {
+      pintar(rejilla4, { agente: estado.agente });
+      const celdas = rejilla4.children;
+      casillas().forEach(([x, y], i) => {
+        const k = clave(x, y);
+        const celda = celdas[i];
+        if (estado.escaneo && estado.escaneo.has(k)) celda.classList.add("escaneo");
+        const p = estado.fantasmas && estado.fantasmas[k];
+        if (!p) return;
+        const fantasma = document.createElement("img");
+        fantasma.src = "img/robot.png";
+        fantasma.alt = "";
+        fantasma.className = "agente";
+        fantasma.style.opacity = String(Math.max(0.15, p));
+        celda.appendChild(fantasma);
+        const rotulo = document.createElement("span");
+        rotulo.className = "prob";
+        rotulo.textContent = Math.round(p * 100) + " %";
+        celda.appendChild(rotulo);
+      });
+    }
+    function creencia4(pPasillo, dx) {
+      const creencia = {};
+      creencia[clave(PASILLO.x + dx, PASILLO.y)] = pPasillo;
+      creencia[clave(JUNTO_ESCALERAS.x + dx, JUNTO_ESCALERAS.y)] = 1 - pPasillo;
+      return creencia;
+    }
+    function mostrarEnergia4(energia, suma) {
+      const queda = Math.max(0, Math.min(1, energia));
+      const barra = document.getElementById("barra-4");
+      barra.style.width = (queda * 100) + "%";
+      barra.style.background = queda > 0.45 ? "#1f7a4d" : queda > 0.2 ? "#c9842a" : "#9c2f2f";
+      document.getElementById("total-4").textContent = suma === null ? "" : "Total: " + coma(suma);
+    }
+    function mostrarGasto4(antes, despues) {
+      const tramo = document.getElementById("gastado-4");
+      if (antes === null) {
+        tramo.style.transition = "none";
+        tramo.style.opacity = "0";
+        return;
+      }
+      tramo.style.left = (Math.max(0, despues) * 100) + "%";
+      tramo.style.width = ((antes - Math.max(0, despues)) * 100) + "%";
+      tramo.style.transition = "none";
+      tramo.style.opacity = "1";
+      setTimeout(() => {
+        tramo.style.transition = "";
+        tramo.style.opacity = "0";
+      }, 1600);
+    }
+    function valores4(pPasillo) {
+      const avanzar = pPasillo - (1 - pPasillo);
+      const escanear = -ESCANEO_4 + pPasillo + (1 - pPasillo) * (1 - PASO_4);
+      return { avanzar, escanear };
+    }
+    function mostrarValores4(valores, elegida) {
+      const caja = document.getElementById("valores-4");
+      caja.classList.toggle("visible", valores !== null);
+      for (const span of caja.querySelectorAll("span")) {
+        const accion = span.dataset.accion;
+        span.querySelector("b").textContent = valores ? coma(valores[accion]) : "";
+        span.classList.toggle("elegida", accion === elegida);
+      }
+    }
+    async function correrCaso4(pPasillo) {
+      const mi = ++token4;
+      let energia = 1;
+      let suma = 0;
+      const sigue = async (ms) => {
+        await esperar(ms);
+        return mi === token4;
+      };
+      mostrarGasto4(null);
+      mostrarValores4(null, null);
+      pintar4({ fantasmas: creencia4(pPasillo, 0) });
+      mostrarEnergia4(energia, suma);
+      if (!await sigue(800)) return;
+      const valores = valores4(pPasillo);
+      const elegida = valores.avanzar >= valores.escanear ? "avanzar" : "escanear";
+      mostrarValores4(valores, elegida);
+      if (!await sigue(1300)) return;
+      let real = { ...REAL_4 };
+      if (elegida === "escanear") {
+        pintar4({ fantasmas: creencia4(pPasillo, 0), escaneo: new Set([clave(PASILLO.x, PASILLO.y), clave(JUNTO_ESCALERAS.x, JUNTO_ESCALERAS.y)]) });
+        mostrarGasto4(energia, energia - ESCANEO_4);
+        energia -= ESCANEO_4;
+        suma -= ESCANEO_4;
+        mostrarEnergia4(energia, suma);
+        if (!await sigue(900)) return;
+        const segura = {};
+        segura[clave(real.x, real.y)] = 1;
+        pintar4({ fantasmas: segura });
+        if (!await sigue(900)) return;
+        const camino = real.y === PASILLO.y ? [] : [{ x: real.x, y: PASILLO.y }];
+        for (const paso of camino) {
+          real = paso;
+          energia -= PASO_4;
+          suma -= PASO_4;
+          pintar4({ agente: real });
+          mostrarEnergia4(energia, suma);
+          if (!await sigue(500)) return;
+        }
+      } else {
+        pintar4({ fantasmas: creencia4(pPasillo, 1) });
+        if (!await sigue(800)) return;
+      }
+      real = { x: real.x + 1, y: real.y };
+      suma += TERMINAL[clave(real.x, real.y)];
+      pintar4({ agente: real });
+      mostrarEnergia4(energia, suma);
+    }
+    document.getElementById("casos-4").addEventListener("click", (e) => {
+      const boton = e.target.closest("button");
+      if (!boton) return;
+      document.querySelectorAll("#casos-4 button").forEach((b) => b.setAttribute("aria-pressed", b === boton ? "true" : "false"));
+      correrCaso4(boton.dataset.caso === "seguro" ? 0.9 : 0.5);
+    });
+    pintar4({ fantasmas: creencia4(0.9, 0) });
+    mostrarEnergia4(1, null);
+  </script>
+</body>
+</html>
