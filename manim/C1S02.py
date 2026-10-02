@@ -15,19 +15,16 @@ class C1S02(Scene):
             self,
             "El problema: decisión secuencial, política y utilidad",
             "Ejemplo del Problema",
-            segundos_titulo=1.89,
+            segundos_titulo=1.08,
         )
         self.celdas = {}
-        self.wait(2.16)
+        self.total = None
+        self.wait(1.24)
         self.armar_rejilla()
-        self.marcar_muro()
         self.colocar_agente()
-        self.marcar_mas_uno()
-        self.marcar_menos_uno()
-        self.un_paso_cuesta()
-        self.nueve_pasos_y_el_premio()
-        self.el_resultado()
-        self.un_paso_mas_reduce()
+        self.marcar_salidas()
+        self.diez_pasos()
+        self.motivo()
         self.cuatro_acciones()
         self.conoce_la_casilla()
 
@@ -38,18 +35,15 @@ class C1S02(Scene):
                 celda = p.casilla(x, y)
                 self.celdas[(x, y)] = celda
                 columna.append(celda)
-            self.play(LaggedStart(*[Create(c) for c in columna], lag_ratio=0.2), run_time=0.62)
-        self.wait(0.49)
-
-    def marcar_muro(self):
-        self.play(self.celdas[(2, 2)].animate.set_fill(p.WALL, opacity=1), run_time=0.55)
-        self.wait(2.42)
+            self.play(LaggedStart(*[Create(c) for c in columna], lag_ratio=0.2), run_time=0.40)
+        self.play(self.celdas[(2, 2)].animate.set_fill(p.WALL, opacity=1), run_time=0.45)
+        self.wait(1.19)
 
     def colocar_agente(self):
         self.agente = Dot(self.celdas[(1, 1)].get_center(), radius=0.12, color=p.AGENT)
-        self.agente.set_z_index(8)
-        self.play(FadeIn(self.agente, scale=0.4), run_time=0.45)
-        self.wait(3.87)
+        self.agente.set_z_index(12)
+        self.play(FadeIn(self.agente, scale=0.4), run_time=0.40)
+        self.wait(2.07)
 
     def caminar(self, casillas, paso):
         for xy in casillas:
@@ -64,118 +58,97 @@ class C1S02(Scene):
         self.agente.move_to(self.celdas[xy].get_center())
         self.play(FadeIn(self.agente, scale=0.4), run_time=entrada)
 
-    def marcar_mas_uno(self):
-        self.caminar([(1, 2), (1, 3), (2, 3), (3, 3), (4, 3)], 0.40)
+    def marcar_salidas(self):
+        self.caminar([(1, 2), (1, 3), (2, 3), (3, 3), (4, 3)], 0.42)
         self.mas = Text("+1", font="Liberation Sans", font_size=28, weight=BOLD, color=p.PAPER)
         self.mas.move_to(self.celdas[(4, 3)])
         self.mas.set_z_index(9)
         self.play(
             self.celdas[(4, 3)].animate.set_fill(p.PLUS, opacity=1),
             FadeIn(self.mas, scale=0.5),
-            run_time=0.50,
+            run_time=0.40,
         )
-        self.wait(3.44)
-
-    def marcar_menos_uno(self):
-        self.reaparecer_en((1, 1), 0.12, 0.12)
-        self.caminar([(2, 1), (3, 1), (4, 1), (4, 2)], 0.35)
+        self.wait(0.90)
+        self.reaparecer_en((1, 1), 0.10, 0.10)
+        self.caminar([(2, 1), (3, 1), (4, 1), (4, 2)], 0.32)
         self.menos = Text("−1", font="Liberation Sans", font_size=28, weight=BOLD, color=p.PAPER)
         self.menos.move_to(self.celdas[(4, 2)])
         self.menos.set_z_index(9)
         self.play(
             self.celdas[(4, 2)].animate.set_fill(p.MINUS, opacity=1),
             FadeIn(self.menos, scale=0.5),
-            run_time=0.40,
+            run_time=0.28,
         )
-        self.wait(1.74)
+        self.wait(0.40)
 
-    def un_paso_cuesta(self):
-        self.reaparecer_en((1, 1), 0.15, 0.15)
-        destino = self.celdas[(1, 2)].get_center()
-        self.play(self.agente.animate.move_to(destino), run_time=0.70, rate_func=linear)
-        self.costo = Text("−0,04", font="Liberation Sans", font_size=28, color=p.INK)
-        self.costo.next_to(self.celdas[(1, 2)], RIGHT, buff=0.15)
-        self.play(FadeIn(self.costo), run_time=0.40)
-        self.wait(7.78)
-
-    def cobrar(self, texto, animacion, run_time):
-        nuevo = Text(texto, font="Liberation Sans", font_size=40, weight=BOLD, color=p.INK)
-        nuevo.move_to(self.ancla_total)
+    def acumular(self, texto, color, animacion, run_time):
+        nuevo = Text(texto, font="Liberation Sans", font_size=36, weight=BOLD, color=color)
+        nuevo.next_to(self.celdas[(2, 1)], DOWN, buff=0.42)
+        nuevo.set_x(0)
         nuevo.set_z_index(10)
-        cambio = FadeIn(nuevo) if self.total is None else ReplacementTransform(self.total, nuevo)
+        cambio = FadeIn(nuevo, shift=DOWN * 0.15) if self.total is None else ReplacementTransform(self.total, nuevo)
         self.play(animacion, cambio, run_time=run_time)
         self.total = nuevo
 
-    def nueve_pasos_y_el_premio(self):
-        self.play(FadeOut(self.costo), run_time=0.20)
+    def diez_pasos(self):
         self.reaparecer_en((1, 1), 0.12, 0.12)
-        self.total = None
-        self.ancla_total = self.celdas[(4, 2)].get_right() + RIGHT * 1.15
-        montos = [
-            "−0,04",
-            "−0,08",
-            "−0,12",
-            "−0,16",
-            "−0,20",
-            "−0,24",
-            "−0,28",
-            "−0,32",
-            "−0,36",
-        ]
-        self.cobrar(
+        montos = ["−0,04", "−0,08", "−0,12", "−0,16", "−0,20", "−0,24", "−0,28", "−0,32", "−0,36"]
+        ruta = [(1, 2), (1, 3), (2, 3), (3, 3), (3, 2), (3, 1)]
+        self.acumular(
             montos[0],
-            self.agente.animate(rate_func=there_and_back).shift(DOWN * 0.28),
-            run_time=0.85,
+            p.INK,
+            self.agente.animate(rate_func=linear).move_to(self.celdas[ruta[0]].get_center()),
+            run_time=1.20,
         )
-        ruta = [(1, 2), (1, 3), (2, 3), (3, 3), (3, 2), (3, 1), (3, 2), (3, 3)]
-        for xy, monto in zip(ruta, montos[1:]):
-            self.cobrar(
+        for xy, monto in zip(ruta[1:], montos[1:6]):
+            self.acumular(
                 monto,
+                p.INK,
                 self.agente.animate(rate_func=linear).move_to(self.celdas[xy].get_center()),
-                run_time=0.85,
+                run_time=1.20,
+            )
+        self.acumular(
+            montos[6],
+            p.INK,
+            self.agente.animate(rate_func=there_and_back).shift(DOWN * 0.28),
+            run_time=1.20,
+        )
+        for xy, monto in zip([(3, 2), (3, 3)], montos[7:]):
+            self.acumular(
+                monto,
+                p.INK,
+                self.agente.animate(rate_func=linear).move_to(self.celdas[xy].get_center()),
+                run_time=1.20,
             )
         esquina = self.celdas[(4, 3)].get_corner(UL) + RIGHT * 0.22 + DOWN * 0.22
-        self.play(
-            self.agente.animate(rate_func=linear).move_to(self.celdas[(4, 3)].get_center()),
-            self.mas.animate.move_to(esquina).scale(0.72),
-            run_time=0.85,
+        self.acumular(
+            "0,64",
+            p.PLUS,
+            AnimationGroup(
+                self.agente.animate(rate_func=linear).move_to(self.celdas[(4, 3)].get_center()),
+                self.mas.animate.move_to(esquina).scale(0.72),
+            ),
+            run_time=1.20,
         )
-        self.wait(1.05)
+        self.wait(0.89)
 
-    def el_resultado(self):
-        suma = Text("0,64", font="Liberation Sans", font_size=48, weight=BOLD, color=p.PLUS)
-        suma.move_to(self.ancla_total)
-        suma.set_z_index(10)
-        premio = self.mas.copy()
-        self.add(premio)
-        self.play(ReplacementTransform(VGroup(self.total, premio), suma), run_time=1.10)
-        self.resultado = suma
-        self.wait(2.41)
-
-    def un_paso_mas_reduce(self):
-        reducido = Text("0,60", font="Liberation Sans", font_size=48, weight=BOLD, color=p.MINUS)
-        reducido.move_to(self.ancla_total)
-        reducido.set_z_index(10)
-        self.play(ReplacementTransform(self.resultado, reducido), run_time=0.55)
-        self.resultado = reducido
-        self.wait(8.90)
+    def motivo(self):
+        self.wait(3.24)
 
     def cuatro_acciones(self):
-        self.play(FadeOut(self.resultado), run_time=0.35)
-        self.play(self.agente.animate.move_to(self.celdas[(1, 1)].get_center()), run_time=0.45)
-        self.wait(3.26)
+        self.play(FadeOut(self.total), run_time=0.25)
+        self.play(self.agente.animate.move_to(self.celdas[(1, 1)].get_center()), run_time=0.40)
+        self.wait(1.67)
         centro = self.celdas[(1, 1)].get_center()
-        tiempos = (0.80, 0.45, 0.50, 0.50)
-        esperas = (0.00, 0.36, 0.58, 0.58)
-        for direccion, duracion, espera in zip((UP, DOWN, LEFT, RIGHT), tiempos, esperas):
+        esperas = (0.11, 0.11, 0.11, 0.27)
+        for direccion, espera in zip((UP, DOWN, LEFT, RIGHT), esperas):
             flecha = Arrow(centro, centro + direccion * 0.72, buff=0.16, color=p.INK, stroke_width=3)
             flecha.set_z_index(5)
-            self.play(Create(flecha), run_time=duracion)
-            if espera:
-                self.wait(espera)
+            self.play(Create(flecha), run_time=0.35)
+            self.wait(espera)
 
     def conoce_la_casilla(self):
         anillo = Circle(radius=0.42, color=p.AGENT, stroke_width=5).move_to(self.agente.get_center())
         anillo.set_z_index(6)
-        self.play(Create(anillo), run_time=0.50)
-        self.wait(9.11)
+        self.play(Create(anillo), run_time=0.40)
+        self.wait(4.99)

@@ -113,17 +113,17 @@ Si la decisión fuera de un solo paso, bastaría con la utilidad del resultado i
 
 ### C1S02 · Tema · Ejemplo del Problema.
 
-**Duración:** 1 min 14 seg
+**Duración:** 40 seg
 
-**En pantalla:** La cuadrícula se dibuja por columnas. El muro ocupa dos dos. El agente aparece en uno uno y camina hasta cuatro tres, que se marca con más uno. Vuelve al inicio y camina hasta cuatro dos, que se marca con menos uno. Luego recorre diez pasos hasta el más uno: el total baja de cuatro en cuatro centésimas hasta menos cero punto tres seis y, al sumar el más uno, queda en cero punto seis cuatro. Un paso más lo deja en cero punto seis cero. Desde uno uno salen las cuatro direcciones, y la casilla queda señalada: el agente la conoce.
+**En pantalla:** La cuadrícula se dibuja y el muro ocupa dos dos. El agente aparece en uno uno, camina hasta cuatro tres y después hasta cuatro dos. Luego da diez pasos hasta el más uno: debajo, la suma baja de cuatro en cuatro centésimas y, al entrar, queda en cero punto seis cuatro. Desde uno uno salen las cuatro direcciones, y la casilla queda señalada.
 
-**Hablado: 1:14**
+**Hablado: 40 seg**
 
 Definamos el entorno.
 
-Tiene cuatro columnas y tres filas. Hay un muro en la casilla dos dos. El agente comienza en la casilla uno uno. El proceso termina al entrar en cuatro tres, con recompensa más uno, o en cuatro dos, con recompensa menos uno.
+Hay cuatro columnas y tres filas, con un muro en la casilla dos dos. El agente comienza en la casilla uno uno. El proceso termina al entrar en cuatro tres, con recompensa más uno, o en cuatro dos, con recompensa menos uno.
 
-En las transiciones que no entran a un estado terminal, la recompensa es menos cero punto cero cuatro. Si el agente llega al estado más uno en diez pasos, recibe nueve veces esa cantidad y después el más uno. El resultado es cero punto seis cuatro. La recompensa negativa da un motivo para terminar pronto: cada paso adicional reduce la suma.
+En las transiciones que no entran a un estado terminal, la recompensa es menos cero punto cero cuatro es decir si el agente llega al estado más uno en diez pasos, se le resta por cada casilla que haya pasado y el resultado es cero punto seis cuatro. la recompensa negativa da un motivo para terminar pronto.
 
 Las acciones en cada estado no terminal son arriba, abajo, izquierda y derecha. En esta primera parte el entorno es totalmente observable: el agente conoce la casilla en la que está.
 
@@ -149,21 +149,17 @@ Las dos respuestas quedan registradas. A continuación definimos el modelo de tr
 
 ### C1S04 · Tema · Modelo de transición
 
-**Duración:** [calcular duración leyendo]
-
-**En pantalla:** Desde (1,1), la acción arriba llega a (1,2) con probabilidad cero punto ocho, a (2,1) con probabilidad cero punto uno, y permanece en (1,1) con probabilidad cero punto uno.
-
-**Indicación:** en la simulación, ejecutar la acción arriba desde uno uno hasta que ocurra un desplazamiento lateral o una permanencia en la misma casilla.
+**Duración:** 48 segundos
 
 **Hablado:**
 
 Definamos el modelo de transición. Se escribe P de s prima dado s y a. Es la probabilidad de llegar al estado s prima si en el estado s se ejecuta la acción a. Suponemos que esa probabilidad es markoviana: depende del estado actual y de la acción, no de los estados anteriores.
 
-En el ejemplo, cada acción produce el efecto pedido con probabilidad cero punto ocho. Con probabilidad cero punto dos el agente se mueve en ángulo recto respecto de la dirección pedida, cero punto uno a cada lado. Si el destino es un muro o el borde del entorno, el agente permanece en la misma casilla.
+En el ejemplo, cada acción producira el efecto pedido con probabilidad cero punto ocho. Con probabilidad cero punto dos el agente se mueve en ángulo recto respecto de la dirección pedida, cero punto uno a cada lado. Si el destino es un muro o el borde del entorno, el agente permanece en la misma casilla.
 
 Desde uno uno, la acción arriba llega a uno dos con probabilidad cero punto ocho, a dos uno con probabilidad cero punto uno, y permanece en uno uno con probabilidad cero punto uno, porque el lado izquierdo es el borde.
 
-### C1S05 · Tema · Por qué una secuencia fija no basta
+### C1S05 · Tema · Estados alcanzables.
 
 **Duración:** [calcular duración leyendo]
 

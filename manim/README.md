@@ -60,7 +60,13 @@ Desde la raíz del proyecto:
 ./bin/manim -ql manim/C1S02.py C1S02
 ```
 
-`-ql` renderiza a 480p y 15 fps, que es la calidad de trabajo. El video queda en:
+`-ql` renderiza a 480p y 15 fps, que es la calidad de trabajo. Para exportar a 1080p se usa `-qh` (1920×1080, 60 fps):
+
+```sh
+./bin/manim -qh manim/C1S02.py C1S02
+```
+
+Esa exportación escribe el mismo archivo y sustituye la versión de 480p. El video queda en:
 
 ```
 manim/escenas/C1S02.mp4

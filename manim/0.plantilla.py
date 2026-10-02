@@ -42,10 +42,16 @@ def presentar(escena, seccion, titulo, inicio=False, segundos_seccion=2.3, segun
         run_time=segundos_titulo,
     )
     escena.encabezado = encabezado
+    escena.encabezado_partes = letras
 
 
 def limpiar(escena, run_time=0.3):
-    restos = [m for m in list(escena.mobjects) if m is not getattr(escena, "encabezado", None)]
+    conservar = set()
+    encabezado = getattr(escena, "encabezado", None)
+    if encabezado is not None:
+        conservar.update(id(m) for m in encabezado.get_family())
+    conservar.update(id(m) for m in getattr(escena, "encabezado_partes", ()))
+    restos = [m for m in list(escena.mobjects) if id(m) not in conservar]
     if restos:
         escena.play(*[FadeOut(m) for m in restos], run_time=run_time)
 
