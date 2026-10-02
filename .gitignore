@@ -1,3 +1,5 @@
 presentacion.html
 .venv/
 media/
+manim/__pycache__/
+manim/escenas/
