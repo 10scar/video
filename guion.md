@@ -517,37 +517,31 @@ Definamos las dos posibilidades. Un desplazamiento cambia la distribución sobre
 
 ### C4S03 · Tema · Sensor, creencia y actualización
 
-**Duración:** [calcular duración leyendo]
+**Duración:** 30 seg
 
-**En pantalla:** Creencia inicial uniforme, un noveno en cada uno de los nueve estados no terminales. Actualización: la acción aplica el modelo de transición; la evidencia repondera los estados compatibles con el sensor.
-
-**Indicación:** iniciar con la creencia uniforme. Pulsar percibir dos veces. Después ejecutar un desplazamiento. Activar la casilla real solo al final, para mostrar que la creencia es una distribución y no la casilla.
+**En pantalla:** Cuadrícula de cuatro por tres. Las nueve casillas no terminales se iluminan con creencia inicial uniforme de un noveno. Panel de sensor con cuatro bits indicando presencia de muro. Destello de escaneo sensorial con actualización bayesiana que concentra la probabilidad. Flechas de desplazamiento que dispersan la creencia según la transición markoviana. Al final, revelación de la casilla física real.
 
 **Hablado:**
 
-El proceso parcialmente observable conserva transición, acciones y recompensa, y añade el sensor. P de e dado s es la probabilidad de observar la evidencia e en el estado s.
+El proceso parcialmente observable añade un sensor con lecturas de cuatro bits, donde cada bit acierta con probabilidad uno menos épsilon.
 
-En este entorno la evidencia tiene cuatro bits: muro o no muro al norte, al sur, al este y al oeste. Cada bit es correcto con probabilidad uno menos épsilon.
+La información del agente es una creencia b: una distribución de probabilidad por casilla que arranca uniforme en un noveno.
 
-La información del agente es una creencia b, una probabilidad por estado. Sin información inicial, b vale un noveno en cada estado no terminal y cero en los terminales.
-
-La actualización tiene dos pasos. La acción reparte la probabilidad de cada estado según la transición, incluido el desplazamiento lateral. La evidencia aumenta la probabilidad de los estados compatibles con lo observado y disminuye la de los demás. Es el filtrado de un estado oculto, con la acción incluida.
-
-En la simulación la distribución inicial es uniforme. Cada observación la concentra. Cada desplazamiento la dispersa según la transición. La casilla real puede ser, o no, la de mayor probabilidad. La creencia es la distribución condicionada a las acciones y a las evidencias, no la casilla.
+La actualización tiene dos fases: el desplazamiento dispersa la probabilidad según la transición, y la evidencia la concentra en los estados compatibles. La creencia resume toda la historia observada.
 
 ### C4S04 · Tema · Consecuencia para la acción y para el cálculo
 
-**Duración:** [calcular duración leyendo]
+**Duración:** 30 seg
 
-**En pantalla:** La acción óptima depende de la creencia. El conjunto de creencias es continuo.
+**En pantalla:** La acción óptima depende de la creencia. Espacio continuo de distribuciones. Comparación en la casilla tres dos entre dos creencias que inducen acciones distintas: alejarse del terminal menos uno frente a buscar contacto con el muro para adquirir certeza (acción epistémica). Función de valor convexa y fragmentos lineales.
 
 **Hablado:**
 
-En el proceso totalmente observable, el estado tres dos determina la acción. En el proceso parcialmente observable, el agente puede estar en tres dos y no saberlo. Dos creencias distintas, incluso si el estado físico es el mismo, pueden hacer óptimas acciones distintas. Una acción puede alejar al agente del terminal menos uno. Otra puede elegirse porque reduce la incertidumbre, aunque no sea la acción que correspondería si el estado se conociera.
+Al no conocer la casilla con certeza, el verdadero estado del problema pasa a ser la creencia, sobre un espacio continuo de distribuciones.
 
-Por eso el estado del problema pasa a ser la creencia. El conjunto de creencias es continuo: hay infinitas distribuciones sobre el mismo conjunto finito de casillas. La utilidad, como función de la creencia, se puede representar por fragmentos lineales, y sobre ese espacio también hay iteración de valores y métodos en línea. Esa construcción no la desarrollamos aquí.
+Dos creencias distintas sobre la misma casilla física pueden exigir acciones diferentes: una para alejarse del peligro y otra para reducir la incertidumbre del sensor.
 
-La consecuencia que se retiene es la siguiente. El cálculo exacto es de otro orden que el del proceso observable, y la pregunta de la acción actual sigue definida: se elige la acción que maximiza el valor esperado a partir de la creencia presente. Esa acción puede obtener recompensa o puede obtener información que mejore la creencia usada en la decisión siguiente.
+La regla fundamental se mantiene: en cada instante se elige la acción que maximiza el valor esperado, ya sea cobrando recompensa o adquiriendo información para la siguiente decisión.
 
 ---
 
@@ -555,23 +549,71 @@ La consecuencia que se retiene es la siguiente. El cálculo exacto es de otro or
 
 ## C5 · Análisis y aplicación en computación y comunicaciones
 
-**Duración del bloque:** [calcular duración leyendo]
+**Duración del bloque:** 210 seg (3:30)
 
-### C5S01 · Tema · Dónde aparece el cálculo
+### C5S01 · Tema · Enrutamiento adaptativo de redes (MDP y Bellman)
 
-**Duración:** [calcular duración leyendo]
+**Duración:** 52 seg
 
-**En pantalla:** Política como regla de la siguiente acción. Tabla completa si el modelo cabe. Cálculo en el momento si el estado no cabe. Bandidos: anuncios, configuraciones, caché. Comunicaciones: ruta, potencia, banda. Medir también es una acción.
+**En pantalla:** Grafo dirigido de enrutadores en una red definida por software. Nodos acumulando colas de paquetes y retardos dinámicos en los enlaces. Ecuación de Bellman de minimización de costo. Selección de enlace óptimo en verde y tránsito fluido de paquetes.
 
 **Hablado:**
 
-Hablemos de dónde aparece este cálculo en computación y en comunicaciones.
+Todo lo que hemos visto sobre procesos de decisión de Markov y la ecuación de Bellman no se queda en modelos teóricos: está operando ahora mismo en la infraestructura de internet.
 
-En computación, una política es la regla con la que un programa elige la siguiente acción cuando el resultado no está garantizado. La iteración de valores y la de políticas calculan esa regla si el modelo cabe en una tabla. Cuando el estado es demasiado grande, como en el tablero de diez por veinte, la decisión se calcula en el momento, mirando hacia adelante.
+Pensemos en el enrutamiento dentro de una red definida por software. Si usamos rutas estáticas fijas, una ráfaga repentina de tráfico satura los búferes de los conmutadores, dispara la latencia y provoca pérdida de paquetes.
 
-Los bandidos aparecen cuando hay que repartir ensayos entre opciones: qué anuncio mostrar, qué configuración probar, qué elemento conservar en una caché. Explotar repite lo que ya rindió. Explorar gasta un ensayo para saber más.
+Para resolverlo de forma dinámica, el problema se modela como un MDP. El estado reúne el nivel de llenado de las colas locales y el retardo medido hacia cada enlace vecino. La acción es seleccionar por cuál puerto despachar el siguiente paquete. Como el tráfico externo llega de manera impredecible, la transición entre estados es estocástica.
 
-En comunicaciones, el canal no se comporta igual en cada instante. Elegir una ruta, una potencia o una banda es una acción. La recompensa puede ser el paquete que llega o el retardo que se evita. Si el nodo no observa el estado completo del enlace, solo una medida con error, el problema es el de la creencia. La acción puede enviar el paquete o puede medir de nuevo para reducir la incertidumbre. Gamma pesa el retardo: un paquete que llega tarde vale menos. La recompensa por paso castiga el intento que no termina.
+Al aplicar Bellman con una función de costo que penaliza la demora y el descarte, el enrutador calcula una política que no solo mira el enlace inmediato, sino la congestión que el paquete encontrará más adelante gracias al factor gamma. La red equilibra su carga de manera automática.
+
+### C5S02 · Tema · Orquestación en la nube (Métodos en línea)
+
+**Duración:** 50 seg
+
+**En pantalla:** Bastidor de servidores en un centro de datos. Árbol de combinatoria expandiéndose con contador exponencial de estados. Ventana de horizonte temporal finito H y simulaciones rápidas hacia adelante decidiendo el aprovisionamiento de nodos y contenedores.
+
+**Hablado:**
+
+Cuando pasamos a la gestión de recursos en centros de datos y clústeres en la nube, nos topamos de frente con la maldición de la dimensionalidad.
+
+Si tuviéramos que precalcular una política completa con Bellman para cada posible combinación de consumo de CPU, memoria y ancho de banda en cientos de máquinas virtuales, la tabla de estados sería gigantesca e imposible de almacenar en memoria.
+
+Por esta razón se aplican métodos de planificación en línea. El orquestador no intenta resolver todos los estados posibles del universo de antemano; únicamente evalúa el estado exacto donde se encuentra el clúster en este instante.
+
+A partir de esa configuración actual, proyecta un árbol de búsqueda con un horizonte de tiempo corto, simula trayectorias hacia adelante para decidir si conviene encender, apagar o migrar una instancia, ejecuta la acción inmediata más conveniente y descarta el resto. Al siguiente ciclo, repite el proceso sobre la nueva situación.
+
+### C5S03 · Tema · Gestión de espectro inalámbrico (Bandidos y Gittins)
+
+**Duración:** 52 seg
+
+**En pantalla:** Cuatro canales de radiofrecuencia (frecuencias f1 a f4) con barras de potencia e interferencia fluctuante. Línea horizontal de índice de Gittins lambda calculada sobre cada canal de forma desacoplada. Flecha indicadora seleccionando el canal de máximo lambda.
+
+**Hablado:**
+
+En las comunicaciones inalámbricas, como en redes móviles 5G o entornos Wi-Fi densos, los canales de radio sufren interferencias que cambian segundo a segundo.
+
+Un dispositivo transmisor tiene varias frecuencias disponibles. Si continúa transmitiendo por el canal que hasta ahora le ha dado una tasa aceptable, está explotando lo conocido. Pero si nunca prueba las otras bandas, no sabrá si alguna quedó libre y le ofrecería mayor velocidad. Es el dilema clásico entre exploración y explotación.
+
+Si quisiéramos modelar todos los canales juntos en un solo MDP tradicional, el espacio de estados crecería de forma exponencial con cada frecuencia adicional, volviendo el cálculo inviable.
+
+El índice de Gittins resuelve esto de manera elegante: desacopla el problema evaluando cada canal por separado contra una alternativa de referencia con recompensa fija lambda. El transmisor solo calcula el índice de cada banda y elige la que tenga el valor más alto, transformando una optimización exponencial en una búsqueda lineal rápida.
+
+### C5S04 · Tema · Ciberseguridad y canales con ruido (POMDP y Creencia)
+
+**Duración:** 56 seg
+
+**En pantalla:** Servidor rodeado por una niebla de incertidumbre. Histograma de probabilidad de infección. Pulso de paquete sonda o diagnóstico de integridad. Colapso de la creencia sobre el estado comprometido y activación de aislamiento preventivo.
+
+**Hablado:**
+
+La última aplicación ataca una realidad cotidiana en redes y seguridad informática: casi nunca conocemos el estado verdadero del sistema con certeza.
+
+En un centro de operaciones de seguridad o en un enlace de radio con desvanecimiento profundo, nadie recibe una señal perfecta que diga si un servidor fue vulnerado o si un enlace físico falló. Solo se reciben alertas de auditoría ruidosas, demoras anómalas o paquetes de confirmación perdidos.
+
+El controlador opera entonces bajo un POMDP: no decide sobre estados exactos, sino sobre una creencia, que es una distribución de probabilidad bayesiana actualizada con cada evidencia que llega.
+
+Y aquí cobra vida el concepto clave de los procesos parcialmente observables: una acción no solo sirve para ganar recompensa física, sino para recolectar información. Enviar paquetes sonda de diagnóstico, medir tiempos de respuesta o auditar la memoria cuesta recursos, pero colapsa la incertidumbre. El sistema no aísla un servidor crítico a ciegas; primero ejecuta acciones de sondeo para afinar su creencia, y solo toma la decisión drástica cuando el riesgo estimado cruza un umbral seguro.
 
 ---
 
